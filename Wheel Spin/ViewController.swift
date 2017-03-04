@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GameplayKit
 
 class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
 
@@ -70,6 +71,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
         return cell
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            words.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+    
     // MARK: Scroll to bottom
     func scrollToBottomOfView() {
         let indexPath = IndexPath(row: words.count - 1, section: 0)
@@ -85,6 +94,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate
     // MARK: Actions
     @IBAction func randomizeWord(_ sender: UIButton) {
         wordTextField.resignFirstResponder()
+        // If list contains words, randomize order of words in words array
+        if words.count > 0 {
+            let shuffledArray = GKRandomSource.sharedRandom().arrayByShufflingObjects(in: words) as! [String]
+            randomWordLabel.text = shuffledArray[0]
+        }
     }
     
     @IBAction func submitWord(_ sender: UIButton) {
